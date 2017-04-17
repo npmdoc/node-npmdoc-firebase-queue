@@ -1,0 +1,268 @@
+<div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a
+
+        href="https://github.com/firebase/firebase-queue"
+
+    >firebase-queue (v1.6.1)</a>
+</h1>
+<h4>A fault-tolerant, multi-worker, multi-stage job pipeline built on Firebase</h4>
+<div class="apidocSectionDiv"><a
+    href="#apidoc.tableOfContents"
+    id="apidoc.tableOfContents"
+><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.firebase-queue">module firebase-queue</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.firebase-queue.firebase-queue">
+            function <span class="apidocSignatureSpan"></span>firebase-queue
+            <span class="apidocSignatureSpan">()</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.firebase-queue.toString">
+            function <span class="apidocSignatureSpan">firebase-queue.</span>toString
+            <span class="apidocSignatureSpan">()</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.firebase-queue.toString">module firebase-queue.toString</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.firebase-queue.toString.toString">
+            function <span class="apidocSignatureSpan">firebase-queue.</span>toString
+            <span class="apidocSignatureSpan">()</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.firebase-queue" id="apidoc.module.firebase-queue">module firebase-queue</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.firebase-queue.firebase-queue" id="apidoc.element.firebase-queue.firebase-queue">
+        function <span class="apidocSignatureSpan"></span>firebase-queue
+        <span class="apidocSignatureSpan">()</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function Queue() {
+  var self = this;
+  var constructorArguments = arguments;
+
+  var error;
+  self.numWorkers = DEFAULT_NUM_WORKERS;
+  self.sanitize = DEFAULT_SANITIZE;
+  self.suppressStack = DEFAULT_SUPPRESS_STACK;
+  self.initialized = false;
+  self.shuttingDown = false;
+
+  self.specChangeListener = null;
+
+  if (constructorArguments.length &#x3c; 2) {
+    error = &#x27;Queue must at least have the queueRef and &#x27; +
+      &#x27;processingFunction arguments.&#x27;;
+    logger.debug(&#x27;Queue(): Error during initialization&#x27;, error);
+    throw new Error(error);
+  } else if (constructorArguments.length === 2) {
+    self.processingFunction = constructorArguments[1];
+  } else if (constructorArguments.length === 3) {
+    var options = constructorArguments[1];
+    if (!_.isPlainObject(options)) {
+      error = &#x27;Options parameter must be a plain object.&#x27;;
+      logger.debug(&#x27;Queue(): Error during initialization&#x27;, error);
+      throw new Error(error);
+    }
+    if (!_.isUndefined(options.specId)) {
+      if (_.isString(options.specId)) {
+        self.specId = options.specId;
+      } else {
+        error = &#x27;options.specId must be a String.&#x27;;
+        logger.debug(&#x27;Queue(): Error during initialization&#x27;, error);
+        throw new Error(error);
+      }
+    }
+    if (!_.isUndefined(options.numWorkers)) {
+      if (_.isNumber(options.numWorkers) &#x26;&#x26;
+          options.numWorkers &#x3e; 0 &#x26;&#x26;
+          options.numWorkers % 1 === 0) {
+        self.numWorkers = options.numWorkers;
+      } else {
+        error = &#x27;options.numWorkers must be a positive integer.&#x27;;
+        logger.debug(&#x27;Queue(): Error during initialization&#x27;, error);
+        throw new Error(error);
+      }
+    }
+    if (!_.isUndefined(options.sanitize)) {
+      if (_.isBoolean(options.sanitize)) {
+        self.sanitize = options.sanitize;
+      } else {
+        error = &#x27;options.sanitize must be a boolean.&#x27;;
+        logger.debug(&#x27;Queue(): Error during initialization&#x27;, error);
+        throw new Error(error);
+      }
+    }
+    if (!_.isUndefined(options.suppressStack)) {
+      if (_.isBoolean(options.suppressStack)) {
+        self.suppressStack = options.suppressStack;
+      } else {
+        error = &#x27;options.suppressStack must be a boolean.&#x27;;
+        logger.debug(&#x27;Queue(): Error during initialization&#x27;, error);
+        throw new Error(error);
+      }
+    }
+    self.processingFunction = constructorArguments[2];
+  } else {
+    error = &#x27;Queue can only take at most three arguments - queueRef, &#x27; +
+      &#x27;options (optional), and processingFunction.&#x27;;
+    logger.debug(&#x27;Queue(): Error during initialization&#x27;, error);
+    throw new Error(error);
+  }
+
+  if (_.has(constructorArguments[0], &#x27;tasksRef&#x27;) &#x26;&#x26;
+      _.has(constructorArguments[0], &#x27;specsRef&#x27;)) {
+    self.tasksRef = constructorArguments[0].tasksRef;
+    self.specsRef = constructorArguments[0].specsRef;
+  } else if (_.isPlainObject(constructorArguments[0])) {
+    error = &#x27;When ref is an object it must contain both keys \&#x27;tasksRef\&#x27; &#x27; +
+      &#x27;and \&#x27;specsRef\&#x27;&#x27;;
+    logger.debug(&#x27;Queue(): Error during initialization&#x27;, error);
+    throw new Error(error);
+  } else {
+    self.tasksRef = constructorArguments[0].child(&#x27;tasks&#x27;);
+    self.specsRef = constructorArguments[0].child(&#x27;specs&#x27;);
+  }
+
+  self.workers = [];
+  for (var i = 0; i &#x3c; self.numWorkers; i++) {
+    var processId = (self.specId ? self.specId + &#x27;:&#x27; : &#x27;&#x27;) + i;
+    self.workers.push(new QueueWorker(
+      self.tasksRef,
+      processId,
+      self.sanitize,
+      self.suppressStack,
+      self.processingFunction
+    ));
+  }
+
+  if (_.isUndefined(self.specId)) {
+    for (var j = 0; j &#x3c; self.numWorkers; j++) {
+      self.workers[j].setTaskSpec(DEFAULT_TASK_SPEC);
+    }
+    self.initialized = true;
+  } else {
+    self.specChangeListener = self.specsRef.child(self.specId).on(
+      &#x27;value&#x27;,
+      function(taskSpecSnap) {
+        var taskSpec = {
+          startState: taskSpecSnap.child(&#x27;start_state&#x27;).val(),
+          inProgressState: taskSpecSnap.child(&#x27;in_progress_state&#x27;).val(),
+          finishedState: taskSpecSnap.child(&#x27;finished_state&#x27;).val(),
+          errorState: taskSpecSnap.child(&#x27;error_state&#x27;).val(),
+          ti ...</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.firebase-queue.toString" id="apidoc.element.firebase-queue.toString">
+        function <span class="apidocSignatureSpan">firebase-queue.</span>toString
+        <span class="apidocSignatureSpan">()</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">toString = function () {
+    return text;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.firebase-queue.toString" id="apidoc.module.firebase-queue.toString">module firebase-queue.toString</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.firebase-queue.toString.toString" id="apidoc.element.firebase-queue.toString.toString">
+        function <span class="apidocSignatureSpan">firebase-queue.</span>toString
+        <span class="apidocSignatureSpan">()</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function toString() { [native code] }</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
