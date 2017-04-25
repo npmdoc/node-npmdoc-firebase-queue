@@ -1,4 +1,7 @@
-# api documentation for  [firebase-queue (v1.6.1)](https://github.com/firebase/firebase-queue)  [![npm package](https://img.shields.io/npm/v/npmdoc-firebase-queue.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-firebase-queue) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-firebase-queue.svg)](https://travis-ci.org/npmdoc/node-npmdoc-firebase-queue)
+# npmdoc-firebase-queue
+
+#### basic api documentation for  [firebase-queue (v1.6.1)](https://github.com/firebase/firebase-queue)  [![npm package](https://img.shields.io/npm/v/npmdoc-firebase-queue.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-firebase-queue) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-firebase-queue.svg)](https://travis-ci.org/npmdoc/node-npmdoc-firebase-queue)
+
 #### A fault-tolerant, multi-worker, multi-stage job pipeline built on Firebase
 
 [![NPM](https://nodei.co/npm/firebase-queue.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/firebase-queue)
@@ -85,7 +88,8 @@
         "test": "gulp test",
         "travis": "gulp"
     },
-    "version": "1.6.1"
+    "version": "1.6.1",
+    "bin": {}
 }
 ```
 
